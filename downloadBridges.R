@@ -1,7 +1,7 @@
-install.packages("ggplot2")
-install.packages("plyr")
-install.packages("choroplethr")
-install.packages("dplyr")
+#install.packages("ggplot2")
+#install.packages("plyr")
+#install.packages("choroplethr")
+#install.packages("dplyr")
 
 library(plyr)
 library(choroplethr)
@@ -23,8 +23,8 @@ library(data.table)
 dest = "https://www.fhwa.dot.gov/bridge/nbi/2016/delimited/AK16.txt"
 tmp = fread(dest) 
 tmp = as.tbl(tmp)
-tmp1 = read_csv(dest)
-tmp2 = read_csv(dest, col_types = "character")  # could make them all characters...
+#tmp1 = read_csv(dest)
+#tmp2 = read_csv(dest, col_types = "c")  # could make them all characters...
 classes = sapply(tmp, class)
 
 
@@ -61,12 +61,12 @@ dat=list()
 
 dest= rep("", 52)
 for(i in 1:52) dest[i]=paste("https://www.fhwa.dot.gov/bridge/nbi/2016/delimited/", states[i,2],"16.txt", sep = "") 
-x16 = ldply(dest, fread, colClasses = classes)  
+x16 = ldply(dest, fread, colClasses = classes)  ###########very important
 
 
 # let's dig into the values and see if there are any crazy things going on...
 M = x16
-M = M[,-14]
+#M = M[,-14]
 is.na(M) %>% rowSums %>% hist
 is.na(M) %>% colSums %>% hist(breaks = 100)
 fun = function(x){ return(which(x>20)) }
@@ -147,7 +147,7 @@ ggplot(data = wi, mapping = aes(y = log(ADT_029), x =YEAR_BUILT_027, col = SUPER
 
 # cond "condition" is the minimum of the given ratings. 
 wi = mutate(wi, cond = pmin(SUPERSTRUCTURE_COND_059, SUBSTRUCTURE_COND_060, CHANNEL_COND_061,CULVERT_COND_062, 
-                       na.rm = T))
+                            na.rm = T))
 
 rateIt = function(cond){
   # gives a good to fail rating for cond.
@@ -179,8 +179,12 @@ wi$fips %>% head
 wi = wi %>% mutate(good = (rate == "good"))
 table(wi$good)
 dat = wi %>% group_by(fips) %>% summarize(propGoodRoads = mean(good))
-  
-# dat = wi %>% group_by(good) %>% summarize(tmp = mean(lat))
 
-dat %>% transmute(region = fips, value = propGoodRoads) %>% county_choropleth(state_zoom = "wisconsin")
+dat = wi %>% group_by(good) %>% summarize(tmp = mean(lat))
+
+dat %>% transmute(region=fips, value = propGoodRoads) %>% county_choropleth(state_zoom = "wisconsin")
+
+
+
+
 
