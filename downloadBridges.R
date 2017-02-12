@@ -2,7 +2,9 @@
 #install.packages("plyr")
 #install.packages("choroplethr")
 #install.packages("dplyr")
+#install.packages("plotly")
 
+library(plotly)
 library(plyr)
 library(choroplethr)
 library(dplyr)
@@ -65,53 +67,73 @@ x16 = ldply(dest, fread, colClasses = classes)  ###########very important
 
 
 # let's dig into the values and see if there are any crazy things going on...
-M = x16
-#M = M[,-14]
-is.na(M) %>% rowSums %>% hist
-is.na(M) %>% colSums %>% hist(breaks = 100)
-fun = function(x){ return(which(x>20)) }
-(bad =  is.na(M) %>% colSums %>% fun)
-M = M[,-bad]
-jold =1
-for(j in jold:ncol(M)){
-  nc = nchar(M[,j], keepNA = T)
-  print(j)
-  print(summary(nc))
-  print(sum(is.na(nc)))
-  print("")
-}
-colnames(M)[j]
-M = M[,-j]
-jold = j
+bridgeFull = x16
+#bridgeFull = bridgeFull[,-14]
+#is.na(bridgeFull) %>% rowSums %>% hist
+#is.na(bridgeFull) %>% colSums %>% hist(breaks = 100)
+fun = function(x){ 
+  return(which(x>20)) 
+  }
+(bad =  is.na(bridgeFull) %>% colSums %>% fun)
+bridgeFull = bridgeFull[,-bad]
+#jold =1
+#for(j in jold:ncol(bridgeFull)){
+#  nc = nchar(bridgeFull[,j], keepNA = T)
+#  print(j)
+#  print(summary(nc))
+#  print(sum(is.na(nc)))
+#  print("")
+#}
+#colnames(bridgeFull)[j]
+#bridgeFull = bridgeFull[,-j]
+#jold = j
 
-colnames(M)
-# [1] "STATE_CODE_001"          "STRUCTURE_NUMBER_008"    "RECORD_TYPE_005A"        "ROUTE_PREFIX_005B"       "SERVICE_LEVEL_005C"      "ROUTE_NUMBER_005D"       "DIRECTION_005E"          "HIGHWAY_DISTRICT_002"   
-# [9] "COUNTY_CODE_003"         "PLACE_CODE_004"          "FEATURES_DESC_006A"      "FACILITY_CARRIED_007"    "MIN_VERT_CLR_010"        "KILOPOINT_011"           "LRS_INV_ROUTE_013A"      "LAT_016"                
-# [17] "LONG_017"                "DETOUR_KILOS_019"        "TOLL_020"                "MAINTENANCE_021"         "OWNER_022"               "FUNCTIONAL_CLASS_026"    "YEAR_BUILT_027"          "TRAFFIC_LANES_ON_028A"  
-# [25] "TRAFFIC_LANES_UND_028B"  "ADT_029"                 "YEAR_ADT_030"            "DESIGN_LOAD_031"         "APPR_WIDTH_MT_032"       "MEDIAN_CODE_033"         "DEGREES_SKEW_034"        "STRUCTURE_FLARED_035"   
-# [33] "RAILINGS_036A"           "TRANSITIONS_036B"        "APPR_RAIL_036C"          "APPR_RAIL_END_036D"      "HISTORY_037"             "NAVIGATION_038"          "NAV_VERT_CLR_MT_039"     "NAV_HORR_CLR_MT_040"    
-# [41] "OPEN_CLOSED_POSTED_041"  "SERVICE_ON_042A"         "SERVICE_UND_042B"        "STRUCTURE_KIND_043A"     "STRUCTURE_TYPE_043B"     "APPR_KIND_044A"          "APPR_TYPE_044B"          "MAIN_UNIT_SPANS_045"    
-# [49] "APPR_SPANS_046"          "HORR_CLR_MT_047"         "MAX_SPAN_LEN_MT_048"     "STRUCTURE_LEN_MT_049"    "LEFT_CURB_MT_050A"       "RIGHT_CURB_MT_050B"      "ROADWAY_WIDTH_MT_051"    "DECK_WIDTH_MT_052"      
-# [57] "VERT_CLR_OVER_MT_053"    "VERT_CLR_UND_REF_054A"   "VERT_CLR_UND_054B"       "LAT_UND_REF_055A"        "LAT_UND_MT_055B"         "LEFT_LAT_UND_MT_056"     "DECK_COND_058"           "SUPERSTRUCTURE_COND_059"
-# [65] "SUBSTRUCTURE_COND_060"   "CHANNEL_COND_061"        "CULVERT_COND_062"        "OPR_RATING_METH_063"     "INV_RATING_METH_065"     "STRUCTURAL_EVAL_067"     "DECK_GEOMETRY_EVAL_068"  "UNDCLRENCE_EVAL_069"    
-# [73] "POSTING_EVAL_070"        "WATERWAY_EVAL_071"       "APPR_ROAD_EVAL_072"      "DATE_OF_INSPECT_090"     "FRACTURE_092A"           "UNDWATER_LOOK_SEE_092B"  "SPEC_INSPECT_092C"       "STRAHNET_HIGHWAY_100"   
-# [81] "PARALLEL_STRUCTURE_101"  "TRAFFIC_DIRECTION_102"   "HIGHWAY_SYSTEM_104"      "FEDERAL_LANDS_105"       "DECK_STRUCTURE_TYPE_107" "SURFACE_TYPE_108A"       "MEMBRANE_TYPE_108B"      "DECK_PROTECTION_108C"   
-# [89] "NATIONAL_NETWORK_110"    "BRIDGE_LEN_IND_112"      "SCOUR_CRITICAL_113"      "FUTURE_ADT_114"          "YEAR_OF_FUTURE_ADT_115"  "FED_AGENCY"              "DATE_LAST_UPDATE"        "TYPE_LAST_UPDATE"       
-# [97] "DEDUCT_CODE"             "PROGRAM_CODE"            "PROJ_NO"                 "STATUS_WITH_10YR_RULE"   "SUFFICIENCY_ASTERC"      "SUFFICIENCY_RATING"      "STATUS_NO_10YR_RULE"    
+colnames(bridgeFull)
+#[1] "STATE_CODE_001"          "STRUCTURE_NUMBER_008"    "RECORD_TYPE_005A"        "ROUTE_PREFIX_005B"      
+#[5] "SERVICE_LEVEL_005C"      "ROUTE_NUMBER_005D"       "DIRECTION_005E"          "HIGHWAY_DISTRICT_002"   
+#[9] "COUNTY_CODE_003"         "FEATURES_DESC_006A"      "FACILITY_CARRIED_007"    "LOCATION_009"           
+#[13] "MIN_VERT_CLR_010"        "KILOPOINT_011"           "LAT_016"                 "LONG_017"               
+#[17] "DETOUR_KILOS_019"        "TOLL_020"                "MAINTENANCE_021"         "OWNER_022"              
+#[21] "FUNCTIONAL_CLASS_026"    "YEAR_BUILT_027"          "TRAFFIC_LANES_ON_028A"   "TRAFFIC_LANES_UND_028B" 
+#[25] "ADT_029"                 "YEAR_ADT_030"            "DESIGN_LOAD_031"         "APPR_WIDTH_MT_032"      
+#[29] "MEDIAN_CODE_033"         "DEGREES_SKEW_034"        "STRUCTURE_FLARED_035"    "RAILINGS_036A"          
+#[33] "TRANSITIONS_036B"        "APPR_RAIL_036C"          "APPR_RAIL_END_036D"      "HISTORY_037"            
+#[37] "NAVIGATION_038"          "NAV_VERT_CLR_MT_039"     "NAV_HORR_CLR_MT_040"     "OPEN_CLOSED_POSTED_041" 
+#[41] "SERVICE_ON_042A"         "SERVICE_UND_042B"        "STRUCTURE_KIND_043A"     "STRUCTURE_TYPE_043B"    
+#[45] "APPR_KIND_044A"          "APPR_TYPE_044B"          "MAIN_UNIT_SPANS_045"     "APPR_SPANS_046"         
+#[49] "HORR_CLR_MT_047"         "MAX_SPAN_LEN_MT_048"     "STRUCTURE_LEN_MT_049"    "LEFT_CURB_MT_050A"      
+#[53] "RIGHT_CURB_MT_050B"      "ROADWAY_WIDTH_MT_051"    "DECK_WIDTH_MT_052"       "VERT_CLR_OVER_MT_053"   
+#[57] "VERT_CLR_UND_REF_054A"   "VERT_CLR_UND_054B"       "LAT_UND_REF_055A"        "LAT_UND_MT_055B"        
+#[61] "LEFT_LAT_UND_MT_056"     "DECK_COND_058"           "SUPERSTRUCTURE_COND_059" "SUBSTRUCTURE_COND_060"  
+#[65] "CHANNEL_COND_061"        "CULVERT_COND_062"        "OPR_RATING_METH_063"     "INV_RATING_METH_065"    
+#[69] "STRUCTURAL_EVAL_067"     "DECK_GEOMETRY_EVAL_068"  "UNDCLRENCE_EVAL_069"     "POSTING_EVAL_070"       
+#[73] "WATERWAY_EVAL_071"       "APPR_ROAD_EVAL_072"      "DATE_OF_INSPECT_090"     "FRACTURE_092A"          
+#[77] "UNDWATER_LOOK_SEE_092B"  "SPEC_INSPECT_092C"       "STRAHNET_HIGHWAY_100"    "PARALLEL_STRUCTURE_101" 
+#[81] "TRAFFIC_DIRECTION_102"   "HIGHWAY_SYSTEM_104"      "FEDERAL_LANDS_105"       "DECK_STRUCTURE_TYPE_107"
+#[85] "SURFACE_TYPE_108A"       "MEMBRANE_TYPE_108B"      "DECK_PROTECTION_108C"    "NATIONAL_NETWORK_110"   
+#[89] "BRIDGE_LEN_IND_112"      "SCOUR_CRITICAL_113"      "FUTURE_ADT_114"          "YEAR_OF_FUTURE_ADT_115" 
+#[93] "FED_AGENCY"              "DATE_LAST_UPDATE"        "TYPE_LAST_UPDATE"        "DEDUCT_CODE"            
+#[97] "PROGRAM_CODE"            "PROJ_NO"                 "STATUS_WITH_10YR_RULE"   "SUFFICIENCY_ASTERC"     
+#[101] "SUFFICIENCY_RATING"      "STATUS_NO_10YR_RULE"    
 
-keep = c("STATE_CODE_001", "STRUCTURE_NUMBER_008" , "COUNTY_CODE_003", "LAT_016", "LONG_017", "TOLL_020" , "ADT_029"           ,      "YEAR_ADT_030" ,
-         "YEAR_BUILT_027" , "DECK_COND_058" , "SUPERSTRUCTURE_COND_059", "SUBSTRUCTURE_COND_060"  , "CHANNEL_COND_061","CULVERT_COND_062", "DATE_OF_INSPECT_090"   ,  "FRACTURE_092A"     ,      "UNDWATER_LOOK_SEE_092B" , "SPEC_INSPECT_092C"  )
+
+keep = c("STATE_CODE_001", "STRUCTURE_NUMBER_008" , "COUNTY_CODE_003", "LAT_016", "LONG_017", "TOLL_020" ,
+         "ADT_029","YEAR_ADT_030" ,"YEAR_BUILT_027" , "DECK_COND_058" , "SUPERSTRUCTURE_COND_059", 
+         "SUBSTRUCTURE_COND_060"  , "CHANNEL_COND_061","CULVERT_COND_062", "DATE_OF_INSPECT_090"   ,
+         "FRACTURE_092A"     ,      "UNDWATER_LOOK_SEE_092B" , "SPEC_INSPECT_092C", "ROADWAY_WIDTH_MT_051"   )
 
 # x = M[,match(keep, colnames(M))]
-M = as.tbl(M)
-x = select(M, one_of(keep))  # see chapter 5 (section 4) in r4ds.
+bridgeFull = as.tbl(bridgeFull)
+x = select(bridgeFull, one_of(keep))  # see chapter 5 (section 4) in r4ds.
 
 wi = filter(x, STATE_CODE_001 == 55)
-wi
+#wi
 library(ggplot2)
-ggplot(data = wi) +geom_point(mapping = aes(y = LAT_016, x = LONG_017))
+#ggplot(data = wi) +geom_point(mapping = aes(y = LAT_016, x = LONG_017))
 wi = filter(wi,LONG_017 > 0)
 ggplot(data = wi) +geom_point(mapping = aes(y = LAT_016, x = LONG_017))
+
+plot_ly(y = wi$LAT_016, x = wi$LONG_017,name="bridges in wi")
 
 min2dec = function(x){
   substr(x,3,8) %>% return
@@ -125,14 +147,33 @@ min2dec(wi$LAT_016[1])
 hist(wi$LAT_016 %>% min2dec %>% as.numeric)
 
 wi = mutate(wi,lat = min2dec(LAT_016), lon = min2dec(LONG_017))
-ggplot(data = wi) +geom_point(mapping = aes(y = lat, x = lon))
+#ggplot(data = wi) +geom_point(mapping = aes(y = lat, x = lon))
 
 wi = filter(wi,lon<100)
 ggplot(data = wi) +geom_point(mapping = aes(y = lat, x = lon))
 
-ggplot(data = wi) +geom_point(mapping = aes(y = lat, x = lon,col =TOLL_020))
-ggplot(data = wi) +geom_point(mapping = aes(y = lat, x = lon,col =YEAR_BUILT_027))
-ggplot(data = wi) +geom_point(mapping = aes(y = log(ADT_029), x =YEAR_BUILT_027))
+plot_ly(y = wi$lat, x = wi$lon,name="bridges in wi")
+
+
+
+#ggplot(data = wi) +geom_point(mapping = aes(y = lat, x = lon,col =TOLL_020))
+p = plot_ly(y = wi$lat, x = wi$lon,name='bridges in wi')
+subplot( add_markers(p, symbol = (wi$TOLL_020),alpha=0.4))
+
+#ggplot(data = wi) +geom_point(mapping = aes(y = lat, x = lon,col =YEAR_BUILT_027))
+#p = plot_ly(y = wi$lat, x = wi$lon,name='year of bridges in wi')
+subplot( add_markers(p,color = (wi$YEAR_BUILT_027),alpha=1))
+
+#p = plot_ly(y = wi$lat, x = wi$lon,name='conditions of bridges in wi')
+subplot( add_markers(p,color = (wi$DECK_COND_058),alpha=1))
+
+
+subplot( add_markers(p,color = ~factor(wi$ROADWAY_WIDTH_MT_051),alpha=1))
+
+
+#ggplot(data = wi) +geom_point(mapping = aes(y = log(ADT_029), x =YEAR_BUILT_027))
+plot_ly(y = log(wi$ADT_029), x = wi$YEAR_BUILT_027,name="bridges in wi")
+
 ggplot(data = wi, mapping = aes(y = log(ADT_029), x =YEAR_BUILT_027, col = TOLL_020)) +geom_point() + geom_smooth()
 
 ggplot(data = wi, mapping = aes(y = log(ADT_029), x =YEAR_BUILT_027, col = SUPERSTRUCTURE_COND_059)) +geom_point() + geom_smooth(method = "loess", span = .7)
@@ -168,7 +209,7 @@ map + geom_point(aes(col=rate))+ scale_colour_brewer(palette = "Spectral")
 
 # where are these bad roads?!!??
 ggplot(data = wi, mapping = aes(x = rate, y = log(ADT_029))) + geom_boxplot()
-colnames(wi)
+#colnames(wi)
 
 # use a data playground!
 
